@@ -4,12 +4,32 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt
 const categoryName = item => item.categoryId === '13' ? 'gadio' : item.categoryId === '12' ? 'GADIO pro' : item.category;
 const duration = seconds => seconds ? `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2,'0')}` : '';
 let catalog;
+const beijingToday = () => new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+let replayYear = Number(beijingToday().slice(0,4)) - 10;
+$('#replay-year').value = replayYear;
+function applyYear() {
+  const input = $('#replay-year');
+  const raw = input.value.trim();
+  const max = Number(beijingToday().slice(0,4));
+  if (!/^\d{4}$/.test(raw) || Number(raw) < 2010 || Number(raw) > max) {
+    input.setAttribute('aria-invalid','true');
+    $('#year-error').textContent = `请输入 2010—${max} 的整数年份`;
+    return;
+  }
+  input.removeAttribute('aria-invalid');
+  $('#year-error').textContent = '';
+  const year = Number(raw);
+  input.value = year;
+  if (year !== replayYear) { replayYear = year; load(true); }
+}
+$('#year-form').addEventListener('submit',event => {event.preventDefault();applyYear();});
+$('#replay-year').addEventListener('change',applyYear);
 async function staticData(offset, selectedCategory) {
   catalog ??= fetch('data/radios-all.json', {cache:'no-cache'}).then(r => { if (!r.ok) throw new Error('Data unavailable'); return r.json(); }).catch(e => {catalog = null; throw e;});
   const snapshot = await catalog;
   const today = new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
   const [year,month,day] = today.split('-').map(Number);
-  const oldYear = year - 10;
+  const oldYear = replayYear;
   const oldDay = Math.min(day,new Date(Date.UTC(oldYear,month,0)).getUTCDate());
   const date = `${oldYear}-${String(month).padStart(2,'0')}-${String(oldDay).padStart(2,'0')}`;
   const cutoff = Date.UTC(oldYear,month-1,oldDay+1) / 1000 - 8*3600 - 1;
