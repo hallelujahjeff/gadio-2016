@@ -5,14 +5,15 @@ const categoryName = item => item.categoryId === '13' ? 'gadio' : item.categoryI
 const duration = seconds => seconds ? `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2,'0')}` : '';
 let catalog;
 async function staticData(offset, selectedCategory) {
-  catalog ??= fetch('data/episodes.json', {cache:'no-cache'}).then(r => { if (!r.ok) throw new Error('Data unavailable'); return r.json(); }).catch(e => {catalog = null; throw e;});
+  catalog ??= fetch('data/radios-all.json', {cache:'no-cache'}).then(r => { if (!r.ok) throw new Error('Data unavailable'); return r.json(); }).catch(e => {catalog = null; throw e;});
   const snapshot = await catalog;
   const today = new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
   const [year,month,day] = today.split('-').map(Number);
   const oldYear = year - 10;
   const oldDay = Math.min(day,new Date(Date.UTC(oldYear,month,0)).getUTCDate());
   const date = `${oldYear}-${String(month).padStart(2,'0')}-${String(oldDay).padStart(2,'0')}`;
-  const rows = snapshot.items.filter(i => i.date <= date && (selectedCategory === 'all' || i.categoryId === selectedCategory));
+  const cutoff = Date.UTC(oldYear,month-1,oldDay+1) / 1000 - 8*3600 - 1;
+  const rows = snapshot.items.filter(i => i.publishedTimestamp <= cutoff && (selectedCategory === 'all' || i.categoryId === selectedCategory)).sort((a,b)=>b.publishedTimestamp-a.publishedTimestamp);
   return {today,date,items:rows.slice(offset,offset+21),hasMore:rows.length>offset+21,nextOffset:offset+21};
 }
 function card(item, featured) {
