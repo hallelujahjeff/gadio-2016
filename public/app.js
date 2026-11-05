@@ -37,7 +37,7 @@ async function staticData(offset, selectedCategory) {
   return {today,date,items:rows.slice(offset,offset+21),hasMore:rows.length>offset+21,nextOffset:offset+21};
 }
 function card(item, featured) {
-  return `<article class="episode${featured ? ' featured' : ''}"><div class="episode-meta"><time datetime="${item.date}">${item.date}</time><span>${esc(categoryName(item))}${item.vol ? ' vol.' + esc(item.vol) : ''}</span></div><a class="cover" href="${esc(item.url)}" target="_blank" rel="noopener" aria-label="收听：${esc(item.title)}"><img src="${esc(item.image)}" alt="${esc(item.title)}" ${featured ? 'fetchpriority="high"' : 'loading="lazy"'}><span class="audio-icon" aria-hidden="true">▶</span><span class="duration">${duration(item.duration)}</span></a><h2><a href="${esc(item.url)}" target="_blank" rel="noopener">${esc(item.title)}</a></h2><p>${esc(item.description)}</p></article>`;
+  return `<article class="episode${featured ? ' featured' : ''}"><div class="episode-meta"><time datetime="${item.date}">${item.date}</time><span>${esc(categoryName(item))}${item.vol ? ' vol.' + esc(item.vol) : ''}</span></div><a class="cover" href="${esc(item.url)}" target="_blank" rel="noopener" aria-label="收听：${esc(item.title)}"><img referrerpolicy="no-referrer" src="${esc(item.image)}" alt="${esc(item.title)}" ${featured ? 'fetchpriority="high"' : 'loading="lazy"'}><span class="audio-icon" aria-hidden="true">▶</span><span class="duration">${duration(item.duration)}</span></a><h2><a href="${esc(item.url)}" target="_blank" rel="noopener">${esc(item.title)}</a></h2><p>${esc(item.description)}</p></article>`;
 }
 function imageFallbacks() {
   document.querySelectorAll('img').forEach(img => { img.onerror = () => { img.parentElement.classList.add('image-failed'); img.alt = '节目封面暂不可用'; }; });
@@ -59,7 +59,7 @@ async function load(reset = false) {
     if (number !== requestNumber) return;
     currentDay = data.today;
     $('#episodes').insertAdjacentHTML('beforeend', data.items.map((item, i) => card(item, reset && i === 0)).join(''));
-    if (reset) $('#rewind').innerHTML = data.items.slice(3,6).map(item => `<a class="rewind-item" href="${esc(item.url)}" target="_blank" rel="noopener"><img src="${esc(item.image)}" alt="${esc(item.title)}" loading="lazy"><p>${esc(item.title)}</p><small>${item.date} · ${esc(categoryName(item))}</small></a>`).join('');
+    if (reset) $('#rewind').innerHTML = data.items.slice(3,6).map(item => `<a class="rewind-item" href="${esc(item.url)}" target="_blank" rel="noopener"><img referrerpolicy="no-referrer" src="${esc(item.image)}" alt="${esc(item.title)}" loading="lazy"><p>${esc(item.title)}</p><small>${item.date} · ${esc(categoryName(item))}</small></a>`).join('');
     $('#status').hidden = data.items.length > 0 || !reset;
     if (!data.items.length && reset) $('#status').textContent = '这个栏目在十年前的今天，还没有可收听的节目。';
     nextOffset = data.nextOffset;
@@ -88,3 +88,4 @@ function checkDay() {
 document.addEventListener('visibilitychange',checkDay);
 setInterval(checkDay,60000);
 load(true);
+
