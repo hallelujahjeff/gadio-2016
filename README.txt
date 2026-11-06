@@ -18,3 +18,12 @@ The export script downloads metadata only, not images or audio.
 Original 2016 category artwork is recovered from Wayback Machine.
 This is an unofficial recreation. Content belongs to its original owners.
 Episode links open the official Gcores playback page.
+
+Visitor count (GoatCounter):
+The site sends page views to https://gadio2016.goatcounter.com/ and shows
+the total in a small footer label. The GoatCounter setting "Allow adding
+visitor counts on your website" is enabled. Build and deploy to publish
+the integration. The official ISC-licensed count.js is bundled locally
+because its CDN may be unreachable from some networks; collection still
+requires access to the GoatCounter subdomain. The public count can be
+cached for up to four hours.

@@ -23,7 +23,7 @@ def main():
             item['image'] = 'images/' + name
     (out/'data/radios-all.json').write_text(json.dumps(snapshot,ensure_ascii=False),encoding='utf8')
     html = (out/'index.html').read_text(encoding='utf8')
-    html = html.replace('href="/"','href="./"').replace('href="/favicon.svg"','href="favicon.svg"').replace('href="/style.css','href="style.css').replace('src="/app.js','src="app.js').replace('src="/assets/','src="assets/')
+    html = html.replace('href="/"','href="./"').replace('href="/favicon.svg"','href="favicon.svg"').replace('href="/style.css','href="style.css').replace('src="/app.js','src="app.js').replace('src="/analytics.js','src="analytics.js').replace('src="/assets/','src="assets/')
     (out/'index.html').write_text(html,encoding='utf8')
     css = (out/'style.css').read_text(encoding='utf8').replace("url('/assets/", "url('assets/")
     (out/'style.css').write_text(css,encoding='utf8')
